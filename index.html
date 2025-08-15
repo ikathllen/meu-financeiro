@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Controle Financeiro</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -15,13 +16,11 @@
         <input type="month" id="month-select" />
       </div>
     </header>
-
     <section class="summary-cards">
       <div class="card card-income"><h3>Receitas</h3><p id="sum-income">R$ 0,00</p></div>
       <div class="card card-expenses"><h3>Despesas</h3><p id="sum-expenses">R$ 0,00</p></div>
       <div class="card card-balance"><h3>Saldo</h3><p id="sum-balance">R$ 0,00</p></div>
     </section>
-
     <section class="inputs">
       <div class="input-group">
         <h2>Receita</h2>
@@ -37,16 +36,12 @@
         <button id="btn-add-expense">Adicionar Despesa</button>
       </div>
     </section>
-
     <h2 id="dashboard-subtitle">Dashboard</h2>
-    
     <div class="view-toggle">
       <label><input type="radio" name="view" id="view-month" checked /> Mês Atual</label>
       <label><input type="radio" name="view" id="view-annual" /> Anual</label>
     </div>
-    
     <canvas id="chart-expenses" style="max-height:300px;"></canvas>
-
     <section class="table-section">
       <h2>Lançamentos</h2>
       <div class="table-responsive">
@@ -57,7 +52,6 @@
       </div>
     </section>
   </div>
-
   <div id="edit-modal" class="modal">
     <div class="modal-content">
       <h2>Editar</h2>
@@ -67,7 +61,6 @@
       <button id="btn-cancel-edit">Cancelar</button>
     </div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
