@@ -29,20 +29,24 @@ document.addEventListener('DOMContentLoaded', () => {
     return new Date(`${ny}-${String(nm).padStart(2,'0')}-01`)
       .toLocaleString('pt-BR',{month:'long'});
   }
-
   function fmt(v){
     return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2});
   }
+
+  const pastelBlues = [
+    '#DAF0F7','#D5E3F0','#C8D9F0','#C1D5F0',
+    '#B4CBF0','#A8B5E0','#E1F3FB','#CDEAF6',
+    '#ABE7FE','#8CE1F4','#AEC6CF','#79D2E6'
+  ];
 
   function renderAll(){
     const key = mInput.value, isAn = vAnnual.checked;
     tbody.innerHTML = '';
     let chartData = {}, totExp = 0, totInc = 0;
-
     const months = Object.keys(data).sort();
 
     if(isAn){
-      months.forEach(mo=>{
+      months.forEach((mo, idx) => {
         const d = data[mo] || {expenses:[]},
               exp = d.expenses.reduce((a,e)=>a+e.amount,0);
         if(exp>0){
@@ -63,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let saldoAnterior = 0;
       months.forEach(mo=>{
         if(mo >= key) return;
-        const d = data[mo] || {incomes:[], expenses:[]},
+        const d = data[mo] || {incomes:[],expenses:[]},
               inc = d.incomes.reduce((a,i)=>a+i.amount,0),
               exp = d.expenses.reduce((a,e)=>a+e.amount,0);
         saldoAnterior += inc - exp;
@@ -72,8 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const trPrev = document.createElement('tr');
       trPrev.innerHTML=`<td>Receita</td><td>Saldo anterior</td><td class="income">${fmt(saldoAnterior)}</td><td></td>`;
       tbody.appendChild(trPrev);
-
-      const d = data[key] || {incomes:[], expenses:[]};
+      const d = data[key] || {incomes:[],expenses:[]};
       d.incomes.forEach(it=>{
         totInc += it.amount;
         const tr=document.createElement('tr');
@@ -91,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         chartData[it.category] = (chartData[it.category]||0)+it.amount;
       });
       totExp = localExp;
-
       sumI.style.display='block';
       sumB.style.display='block';
       sumE.style.display='block';
@@ -110,7 +112,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if(chart) chart.destroy();
     chart = new Chart(chartEl, {
       type:'pie',
-      data:{labels,datasets:[{data:vals,backgroundColor:['#6699CC','#99BBCC','#AACCEE']}]},
+      data:{
+        labels,
+        datasets:[{
+          data:vals,
+          backgroundColor: labels.map((_,i)=>pastelBlues[i % pastelBlues.length])
+        }]
+      },
       options:{responsive:true,plugins:{legend:{position:'bottom'}}}
     });
   }
@@ -119,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
   mInput.addEventListener('change',()=>{vMonth.checked=true;vAnnual.checked=false; renderAll();});
   vMonth.addEventListener('change',renderAll);
   vAnnual.addEventListener('change',renderAll);
-
   btnInc.addEventListener('click', ()=>{
     const v = parseFloat(valInc.value);
     if(!catInc.value||isNaN(v)||v<=0) return alert('Selecione categoria e valor positivo');
@@ -129,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
     valInc.value = '';
     renderAll();
   });
-
   btnExp.addEventListener('click', ()=>{
     const v = parseFloat(valExp.value);
     if(!selExpCat.value||!descExp.value||isNaN(v)||v<=0) return alert('Preencha categoria, descrição e valor');
@@ -137,8 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(!data[mo]) data[mo]={incomes:[],expenses:[]};
     data[mo].expenses.push({id:Date.now(),category:selExpCat.value,desc:descExp.value,amount:v});
     selExpCat.selectedIndex = 0;
-    descExp.value='';
-    valExp.value='';
+    descExp.value=''; valExp.value='';
     renderAll();
   });
 
@@ -166,16 +171,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if(isNaN(v)||v<=0) return alert('Valor inválido');
     it.amount = v;
     if(type==='expense'){ if(!editDesc.value) return alert('Descrição obrigatória'); it.desc = editDesc.value;}
-    editing=null;
-    modal.style.display='none';
-    renderAll();
+    editing=null; modal.style.display='none'; renderAll();
   });
 
   btnCancel.addEventListener('click',()=>{
-    editing=null;
-    modal.style.display='none';
+    editing=null; modal.style.display='none';
   });
-
   window.addEventListener('click',e=>{
     if(e.target===modal){editing=null; modal.style.display='none';}
   });
